@@ -1,0 +1,209 @@
+# -*- coding: utf-8 -*-
+from odoo import models, fields, api
+
+
+class TransactionEcoethno(models.Model):
+    _name = 'transaksi.transaksi'
+    _description = 'Transaksi Ecoethno'
+    _rec_name = 'no_transaksi'
+
+    # Field Utama
+    no_transaksi = fields.Char(
+        string='No. Transaksi',
+        required=True,
+        unique=True,
+        readonly=True,
+        default=lambda self: self.env['ir.sequence'].next_by_code('transaksi.transaksi') or 'TRANS/000000'
+    )
+    
+    tanggal_transaksi = fields.Date(
+        string='Tanggal Transaksi',
+        required=True,
+        default=fields.Date.today
+    )
+    
+    # Relasi dengan Pelanggan
+    customer_id = fields.Many2one(
+        'res.partner',
+        string='Pelanggan',
+        required=True,
+        readonly=False,
+        help='Pilih pelanggan yang melakukan transaksi'
+    )
+    
+    customer_name = fields.Char(
+        string='Nama Pelanggan',
+        related='customer_id.name',
+        readonly=True,
+        store=True
+    )
+    
+    customer_phone = fields.Char(
+        string='No. Kontak Pelanggan',
+        related='customer_id.phone',
+        readonly=True,
+        store=True
+    )
+    
+    # Data Reservasi
+    no_reservasi = fields.Char(
+        string='No. Reservasi',
+        required=True,
+        help='Nomor reservasi dari pelanggan'
+    )
+    
+    tanggal_kegiatan = fields.Date(
+        string='Tanggal Kegiatan',
+        required=True,
+        help='Tanggal pelaksanaan kegiatan/layanan'
+    )
+    
+    # Paket Layanan
+    paket_layanan = fields.Selection(
+        selection=[
+            ('camping', 'Camping'),
+            ('outbound', 'Outbound'),
+            ('event_organizer', 'Event Organizer'),
+            ('workshop', 'Workshop'),
+            ('lainnya', 'Lainnya'),
+        ],
+        string='Paket Layanan',
+        required=True,
+        help='Pilih jenis paket layanan yang dipilih pelanggan'
+    )
+    
+    deskripsi_paket = fields.Text(
+        string='Deskripsi Paket',
+        help='Deskripsi detail tentang paket layanan'
+    )
+    
+    # Detail Peserta
+    jumlah_peserta = fields.Integer(
+        string='Jumlah Peserta',
+        required=True,
+        default=1,
+        help='Total jumlah peserta/tamu'
+    )
+    
+    # Nilai Transaksi
+    harga_satuan = fields.Float(
+        string='Harga Satuan (per peserta)',
+        required=True,
+        default=0.0,
+        help='Harga per peserta'
+    )
+    
+    nilai_transaksi = fields.Float(
+        string='Nilai Transaksi (Rp)',
+        compute='_compute_nilai_transaksi',
+        store=True,
+        readonly=True,
+        help='Nilai total transaksi = Harga Satuan × Jumlah Peserta'
+    )
+    
+    # Status Pembayaran
+    status_pembayaran = fields.Selection(
+        selection=[
+            ('belum_bayar', 'Belum Dibayar'),
+            ('sebagian', 'Sebagian Dibayar'),
+            ('lunas', 'Lunas'),
+            ('dibatalkan', 'Dibatalkan'),
+        ],
+        string='Status Pembayaran',
+        default='belum_bayar',
+        required=True,
+        help='Status pembayaran transaksi'
+    )
+    
+    tanggal_pembayaran = fields.Date(
+        string='Tanggal Pembayaran',
+        help='Tanggal pembayaran transaksi dikonfirmasi'
+    )
+    
+    metode_pembayaran = fields.Selection(
+        selection=[
+            ('cash', 'Tunai'),
+            ('transfer_bank', 'Transfer Bank'),
+            ('kartu_kredit', 'Kartu Kredit'),
+            ('e_wallet', 'E-Wallet'),
+            ('cek', 'Cek'),
+            ('lainnya', 'Lainnya'),
+        ],
+        string='Metode Pembayaran',
+        help='Cara pembayaran yang digunakan'
+    )
+    
+    # Platform Pemesanan
+    platform_pemesanan = fields.Selection(
+        selection=[
+            ('traveloka', 'Traveloka'),
+            ('whatsapp', 'WhatsApp'),
+            ('website', 'Website'),
+            ('telepon', 'Telepon'),
+            ('email', 'Email'),
+            ('langsung', 'Langsung'),
+            ('lainnya', 'Lainnya'),
+        ],
+        string='Platform Pemesanan',
+        help='Channel mana transaksi ini berasal'
+    )
+    
+    # Catatan Tambahan
+    catatan = fields.Text(
+        string='Catatan',
+        help='Catatan tambahan tentang transaksi'
+    )
+    
+    # Audit Trail
+    created_at = fields.Datetime(
+        string='Dibuat pada',
+        readonly=True,
+        default=fields.Datetime.now
+    )
+    
+    created_by = fields.Many2one(
+        'res.users',
+        string='Dibuat oleh',
+        readonly=True,
+        default=lambda self: self.env.user
+    )
+    
+    updated_at = fields.Datetime(
+        string='Diperbarui pada',
+        readonly=True,
+        default=fields.Datetime.now
+    )
+    
+    updated_by = fields.Many2one(
+        'res.users',
+        string='Diperbarui oleh',
+        readonly=True,
+        default=lambda self: self.env.user
+    )
+    
+    # Computed Fields
+    @api.depends('harga_satuan', 'jumlah_peserta')
+    def _compute_nilai_transaksi(self):
+        """Hitung nilai transaksi berdasarkan harga satuan dan jumlah peserta"""
+        for record in self:
+            record.nilai_transaksi = record.harga_satuan * record.jumlah_peserta
+    
+    # Lifecycle Methods
+    @api.model
+    def create(self, vals):
+        """Override create untuk mencatat user yang membuat record"""
+        vals['created_by'] = self.env.user.id
+        vals['updated_by'] = self.env.user.id
+        return super().create(vals)
+    
+    def write(self, vals):
+        """Override write untuk mencatat user yang mengupdate record"""
+        vals['updated_by'] = self.env.user.id
+        return super().write(vals)
+    
+    @api.onchange('customer_id')
+    def _onchange_customer_id(self):
+        """Update informasi pelanggan ketika customer_id berubah"""
+        if self.customer_id:
+            self.customer_name = self.customer_id.name
+            self.customer_phone = self.customer_id.phone

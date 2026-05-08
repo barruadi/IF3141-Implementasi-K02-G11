@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Form View: Detail Transaksi -->
+        <record id="transaksi_view_form" model="ir.ui.view">
+            <field name="name">Transaksi Form</field>
+            <field name="model">transaksi.transaksi</field>
+            <field name="arch" type="xml">
+                <form string="Detail Transaksi">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="no_transaksi" readonly="1"/>
+                            </h1>
+                        </div>
+
+                        <!-- TAB 1: Informasi Umum -->
+                        <notebook>
+                            <page string="Informasi Umum">
+                                <group>
+                                    <group string="Data Transaksi">
+                                        <field name="tanggal_transaksi" />
+                                        <field name="no_reservasi" />
+                                        <field name="tanggal_kegiatan" />
+                                    </group>
+                                    <group string="Status Pembayaran">
+                                        <field name="status_pembayaran" widget="radio" />
+                                        <field name="tanggal_pembayaran" />
+                                        <field name="metode_pembayaran" />
+                                    </group>
+                                </group>
+
+                                <group string="Informasi Platform">
+                                    <field name="platform_pemesanan" />
+                                </group>
+                            </page>
+
+                            <!-- TAB 2: Informasi Pelanggan -->
+                            <page string="Informasi Pelanggan">
+                                <group>
+                                    <group string="Data Pelanggan">
+                                        <field name="customer_id" />
+                                        <field name="customer_name" readonly="1" />
+                                        <field name="customer_phone" readonly="1" />
+                                    </group>
+                                </group>
+                            </page>
+
+                            <!-- TAB 3: Detail Layanan -->
+                            <page string="Detail Layanan">
+                                <group>
+                                    <group string="Paket Layanan">
+                                        <field name="paket_layanan" />
+                                        <field name="deskripsi_paket" />
+                                    </group>
+                                    <group string="Detail Peserta">
+                                        <field name="jumlah_peserta" />
+                                    </group>
+                                </group>
+                            </page>
+
+                            <!-- TAB 4: Nilai Transaksi -->
+                            <page string="Nilai Transaksi">
+                                <group>
+                                    <group string="Perhitungan Harga">
+                                        <field name="harga_satuan" widget="monetary" />
+                                        <field name="jumlah_peserta" />
+                                        <field name="nilai_transaksi" widget="monetary" />
+                                    </group>
+                                </group>
+                            </page>
+
+                            <!-- TAB 5: Catatan &amp; Audit -->
+                            <page string="Catatan &amp; Audit">
+                                <group>
+                                    <group string="Catatan">
+                                        <field name="catatan" />
+                                    </group>
+                                </group>
+
+                                <group string="Informasi Audit">
+                                    <group>
+                                        <field name="created_at" readonly="1" />
+                                        <field name="created_by" readonly="1" />
+                                    </group>
+                                    <group>
+                                        <field name="updated_at" readonly="1" />
+                                        <field name="updated_by" readonly="1" />
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+
+    </data>
+</odoo>

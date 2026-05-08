@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Action: Daftar Transaksi (List View) -->
+        <record id="transaksi_action_list" model="ir.actions.act_window">
+            <field name="name">Riwayat Transaksi</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">transaksi.transaksi</field>
+            <field name="view_mode">tree,form,pivot,graph</field>
+            <field name="target">current</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Belum ada transaksi. Buat transaksi baru untuk memulai!
+                </p>
+            </field>
+        </record>
+
+        <!-- Action: Buat Transaksi Baru -->
+        <record id="transaksi_action_new" model="ir.actions.act_window">
+            <field name="name">Buat Transaksi Baru</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">transaksi.transaksi</field>
+            <field name="view_mode">form</field>
+            <field name="target">current</field>
+        </record>
+
+        <!-- Menu Root untuk Transaksi -->
+        <menuitem id="transaksi_menu_root" 
+                  name="Transaksi" 
+                  web_icon="transaksi,static/description/icon.png"
+                  sequence="30"/>
+
+        <!-- Menu Item: Daftar Transaksi -->
+        <menuitem id="transaksi_menu_transaksi_list" 
+                  name="Riwayat Transaksi" 
+                  parent="transaksi_menu_root"
+                  action="transaksi_action_list"
+                  sequence="10"/>
+
+        <!-- Menu Item: Buat Transaksi Baru -->
+        <menuitem id="transaksi_menu_transaksi_create" 
+                  name="Buat Transaksi" 
+                  parent="transaksi_menu_root"
+                  action="transaksi_action_new"
+                  sequence="20"/>
+
+        <!-- Menu Item: Laporan -->
+        <menuitem id="transaksi_menu_reports" 
+                  name="Laporan" 
+                  parent="transaksi_menu_root"
+                  sequence="30"/>
+
+        <menuitem id="transaksi_menu_report_transaksi" 
+                  name="Laporan Transaksi" 
+                  parent="transaksi_menu_reports"
+                  action="transaksi_action_list"
+                  sequence="10"/>
+
+    </data>
+</odoo>

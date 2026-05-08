@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+transaksi_transaksi_user,Transaksi User Access,model_transaksi_transaksi,base.group_user,1,0,0,0
+transaksi_transaksi_manager,Transaksi Manager Access,model_transaksi_transaksi,base.group_erp_manager,1,1,1,1

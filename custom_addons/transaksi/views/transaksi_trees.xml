@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Tree View (List View): Daftar Transaksi -->
+        <record id="transaksi_view_tree" model="ir.ui.view">
+            <field name="name">Transaksi Tree</field>
+            <field name="model">transaksi.transaksi</field>
+            <field name="arch" type="xml">
+                <tree string="Daftar Transaksi" decoration-info="status_pembayaran=='sebagian'" decoration-warning="status_pembayaran=='belum_bayar'" decoration-success="status_pembayaran=='lunas'" decoration-danger="status_pembayaran=='dibatalkan'">
+                    <field name="no_transaksi" />
+                    <field name="tanggal_transaksi" />
+                    <field name="customer_name" />
+                    <field name="no_reservasi" />
+                    <field name="paket_layanan" />
+                    <field name="jumlah_peserta" />
+                    <field name="nilai_transaksi" sum="Total Transaksi" />
+                    <field name="status_pembayaran" />
+                </tree>
+            </field>
+        </record>
+
+        <!-- Search View: Filter & Pencarian -->
+        <record id="transaksi_view_search" model="ir.ui.view">
+            <field name="name">Transaksi Search</field>
+            <field name="model">transaksi.transaksi</field>
+            <field name="arch" type="xml">
+                <search string="Cari Transaksi">
+                    <!-- Filter: Berdasarkan Status Pembayaran -->
+                    <filter name="filter_belum_bayar" 
+                            string="Belum Dibayar" 
+                            domain="[('status_pembayaran', '=', 'belum_bayar')]" />
+                    <filter name="filter_sebagian" 
+                            string="Sebagian Dibayar" 
+                            domain="[('status_pembayaran', '=', 'sebagian')]" />
+                    <filter name="filter_lunas" 
+                            string="Lunas" 
+                            domain="[('status_pembayaran', '=', 'lunas')]" />
+                    <filter name="filter_dibatalkan" 
+                            string="Dibatalkan" 
+                            domain="[('status_pembayaran', '=', 'dibatalkan')]" />
+                    
+                    <separator/>
+
+                    <!-- Filter: Berdasarkan Paket Layanan -->
+                    <filter name="filter_camping" 
+                            string="Camping" 
+                            domain="[('paket_layanan', '=', 'camping')]" />
+                    <filter name="filter_outbound" 
+                            string="Outbound" 
+                            domain="[('paket_layanan', '=', 'outbound')]" />
+                    <filter name="filter_event_organizer" 
+                            string="Event Organizer" 
+                            domain="[('paket_layanan', '=', 'event_organizer')]" />
+                    <filter name="filter_workshop" 
+                            string="Workshop" 
+                            domain="[('paket_layanan', '=', 'workshop')]" />
+
+                    <separator/>
+
+                    <!-- Grouping -->
+                    <group expand="0" string="Kelompokkan Berdasarkan">
+                        <filter name="group_by_customer" 
+                                string="Pelanggan" 
+                                context="{'group_by': 'customer_name'}" />
+                        <filter name="group_by_status" 
+                                string="Status Pembayaran" 
+                                context="{'group_by': 'status_pembayaran'}" />
+                        <filter name="group_by_paket" 
+                                string="Paket Layanan" 
+                                context="{'group_by': 'paket_layanan'}" />
+                        <filter name="group_by_platform" 
+                                string="Platform Pemesanan" 
+                                context="{'group_by': 'platform_pemesanan'}" />
+                        <filter name="group_by_date" 
+                                string="Tanggal Transaksi" 
+                                context="{'group_by': 'tanggal_transaksi:month'}" />
+                    </group>
+
+                    <!-- Pencarian -->
+                    <field name="no_transaksi" />
+                    <field name="customer_name" />
+                    <field name="no_reservasi" />
+                </search>
+            </field>
+        </record>
+
+        <!-- Pivot View (Analisis Data) -->
+        <record id="transaksi_view_pivot" model="ir.ui.view">
+            <field name="name">Transaksi Pivot</field>
+            <field name="model">transaksi.transaksi</field>
+            <field name="arch" type="xml">
+                <pivot string="Analisis Transaksi">
+                    <field name="paket_layanan" type="row" />
+                    <field name="status_pembayaran" type="column" />
+                    <field name="nilai_transaksi" type="measure" />
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Graph View (Visualisasi) -->
+        <record id="transaksi_view_graph" model="ir.ui.view">
+            <field name="name">Transaksi Graph</field>
+            <field name="model">transaksi.transaksi</field>
+            <field name="arch" type="xml">
+                <graph string="Grafik Transaksi" type="bar">
+                    <field name="paket_layanan" type="row" />
+                    <field name="nilai_transaksi" type="measure" />
+                </graph>
+            </field>
+        </record>
+
+
+
+    </data>
+</odoo>
