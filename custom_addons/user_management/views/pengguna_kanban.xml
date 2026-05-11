@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_pengguna_kanban" model="ir.ui.view">
+        <field name="name">pengguna.kanban</field>
+        <field name="model">user_management.pengguna</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="nama"/>
+                <field name="hak_akses"/>
+                <field name="status_aktif"/>
+
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <div style="
+                                    width:42px;
+                                    height:42px;
+                                    border-radius:50%;
+                                    background:#c9c9c9;
+                                    display:flex;
+                                    align-items:center;
+                                    justify-content:center;
+                                    color:white;
+                                    font-size:20px;">
+                                    <i class="fa fa-user"/>
+                                </div>
+
+                                <div>
+                                    <strong>
+                                        <field name="nama"/>
+                                    </strong>
+                                    <br/>
+                                    <span style="color:#777;">
+                                        <field name="hak_akses"/>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+</odoo>

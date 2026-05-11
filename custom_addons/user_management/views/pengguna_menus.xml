@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="action_pengguna" model="ir.actions.act_window">
+        <field name="name">User Management</field>
+        <field name="res_model">user_management.pengguna</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="help" type="html">
+            <div style="text-align:center; padding: 30px;">
+
+                <i class="fa fa-users"
+                style="font-size:72px; color:#875A7B; margin-bottom:16px;">
+                </i>
+
+                <h2>Belum ada pengguna</h2>
+
+                <p>
+                    Tambahkan pengguna baru untuk mengelola akses Admin,
+                    Manager, dan Staff pada sistem Ecoethno.
+                </p>
+
+            </div>
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_user_management_root"
+        name="User Management"
+        sequence="1"/>
+
+    <menuitem
+        id="menu_pengguna"
+        name="Daftar Pengguna"
+        parent="menu_user_management_root"
+        action="action_pengguna"
+        sequence="1"/>
+
+</odoo>
