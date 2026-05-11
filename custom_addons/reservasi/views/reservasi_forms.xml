@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- FORM VIEW -->
+    <record id="view_reservasi_form" model="ir.ui.view">
+        <field name="name">reservasi.reservasi.form</field>
+        <field name="model">reservasi.reservasi</field>
+
+        <field name="arch" type="xml">
+            <form string="Reservasi">
+                
+                <sheet>
+
+                    <!-- TITLE -->
+                    <div class="oe_title">
+                        <h1>
+                            <field name="nama_reservasi"/>
+                        </h1>
+                    </div>
+
+                    <!-- MAIN INFORMATION -->
+                    <group string="Informasi Reservasi">
+                        <group>
+                            <field name="customer_id"/>
+                            <field name="tanggal_kunjungan"/>
+                            <field name="jumlah_peserta"/>
+                        </group>
+
+                        <group>
+                            <field name="platform_pemesanan"/>
+                            <field name="status_reservasi"/>
+                        </group>
+                    </group>
+
+                    <!-- NOTES -->
+                    <group string="Catatan">
+                        <field name="catatan"/>
+                    </group>
+
+                </sheet>
+
+            </form>
+        </field>
+    </record>
+
+</odoo>
