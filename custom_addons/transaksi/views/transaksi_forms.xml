@@ -22,6 +22,7 @@
                                         <field name="tanggal_transaksi" />
                                         <field name="no_reservasi" />
                                         <field name="tanggal_kegiatan" />
+                                        <field name="currency_id" invisible="1"/>
                                     </group>
                                     <group string="Status Pembayaran">
                                         <field name="status_pembayaran" widget="radio" />
@@ -39,7 +40,7 @@
                             <page string="Informasi Pelanggan">
                                 <group>
                                     <group string="Data Pelanggan">
-                                        <field name="customer_id" />
+                                        <field name="customer_id" readonly="1" />
                                         <field name="customer_name" readonly="1" />
                                         <field name="customer_phone" readonly="1" />
                                     </group>
@@ -50,11 +51,11 @@
                             <page string="Detail Layanan">
                                 <group>
                                     <group string="Paket Layanan">
-                                        <field name="paket_layanan" />
-                                        <field name="deskripsi_paket" />
+                                        <field name="paket_layanan" readonly="1" />
+                                        <field name="deskripsi_paket" readonly="1" />
                                     </group>
                                     <group string="Detail Peserta">
-                                        <field name="jumlah_peserta" />
+                                        <field name="jumlah_peserta" readonly="1" />
                                     </group>
                                 </group>
                             </page>

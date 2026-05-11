@@ -6,7 +6,8 @@ Modul **Transaksi** adalah fitur untuk mengelola riwayat transaksi dan penjualan
 
 - ✅ Mencatat dan menyimpan riwayat transaksi pelanggan
 - ✅ Menampilkan detail transaksi per pelanggan secara terstruktur
-- ✅ Mengelola informasi reservasi, paket layanan, dan nilai transaksi
+- ✅ Menyimpan informasi nomor reservasi dan tanggal kegiatan di level transaksi
+- ✅ Mengelola paket layanan dan nilai transaksi
 - ✅ Melacak status pembayaran (Belum Dibayar, Sebagian Dibayar, Lunas, Dibatalkan)
 - ✅ Memberikan laporan dan visualisasi transaksi untuk analisis bisnis
 
@@ -38,9 +39,14 @@ transaksi/
 - **customer_name** (Char): Nama pelanggan (auto-fill dari customer_id)
 - **customer_phone** (Char): Nomor kontak pelanggan (auto-fill dari customer_id)
 
-### Data Reservasi
-- **no_reservasi** (Char): Nomor reservasi dari pelanggan
+### Data Reservasi / Transaksi
+- **no_reservasi** (Char): Nomor reservasi pelanggan sebagai referensi transaksi
 - **tanggal_kegiatan** (Date): Tanggal pelaksanaan kegiatan/layanan
+- **paket_layanan** (Selection): Paket layanan yang digunakan pada transaksi
+- **jumlah_peserta** (Integer): Total jumlah peserta pada transaksi
+- **platform_pemesanan** (Selection): Channel atau platform pemesanan reservasi
+
+> Catatan: Modul ini menyimpan data reservasi dan transaksi secara langsung pada record transaksi. Untuk pemetaan ke skema MD D-04, `no_reservasi` merepresentasikan referensi reservasi dan `tanggal_kegiatan` mewakili tanggal kegiatan. Detail paket, peserta, dan platform pemesanan sesuai konteks Use Case 05.
 
 ### Paket Layanan
 - **paket_layanan** (Selection): Jenis paket (Camping, Outbound, Event Organizer, Workshop, Lainnya)

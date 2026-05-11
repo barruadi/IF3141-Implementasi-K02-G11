@@ -15,6 +15,7 @@
     'depends': ['base', 'sale', 'crm'],
     'data': [
         'security/ir.model.access.csv',
+        'data/transaksi_sequence.xml',
         'views/transaksi_menus.xml',
         'views/transaksi_forms.xml',
         'views/transaksi_trees.xml',

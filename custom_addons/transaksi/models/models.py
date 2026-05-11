@@ -6,12 +6,14 @@ class TransactionEcoethno(models.Model):
     _name = 'transaksi.transaksi'
     _description = 'Transaksi Ecoethno'
     _rec_name = 'no_transaksi'
+    _sql_constraints = [
+        ('no_transaksi_uniq', 'unique(no_transaksi)', 'Nomor transaksi harus unik.')
+    ]
 
     # Field Utama
     no_transaksi = fields.Char(
         string='No. Transaksi',
         required=True,
-        unique=True,
         readonly=True,
         default=lambda self: self.env['ir.sequence'].next_by_code('transaksi.transaksi') or 'TRANS/000000'
     )
@@ -27,7 +29,6 @@ class TransactionEcoethno(models.Model):
         'res.partner',
         string='Pelanggan',
         required=True,
-        readonly=False,
         help='Pilih pelanggan yang melakukan transaksi'
     )
     
@@ -56,6 +57,15 @@ class TransactionEcoethno(models.Model):
         string='Tanggal Kegiatan',
         required=True,
         help='Tanggal pelaksanaan kegiatan/layanan'
+    )
+
+    currency_id = fields.Many2one(
+        'res.currency',
+        string='Mata Uang',
+        default=lambda self: self.env.company.currency_id,
+        required=True,
+        readonly=True,
+        help='Mata uang transaksi'
     )
     
     # Paket Layanan
@@ -86,15 +96,17 @@ class TransactionEcoethno(models.Model):
     )
     
     # Nilai Transaksi
-    harga_satuan = fields.Float(
+    harga_satuan = fields.Monetary(
         string='Harga Satuan (per peserta)',
+        currency_field='currency_id',
         required=True,
         default=0.0,
         help='Harga per peserta'
     )
     
-    nilai_transaksi = fields.Float(
+    nilai_transaksi = fields.Monetary(
         string='Nilai Transaksi (Rp)',
+        currency_field='currency_id',
         compute='_compute_nilai_transaksi',
         store=True,
         readonly=True,
@@ -199,6 +211,7 @@ class TransactionEcoethno(models.Model):
     def write(self, vals):
         """Override write untuk mencatat user yang mengupdate record"""
         vals['updated_by'] = self.env.user.id
+        vals['updated_at'] = fields.Datetime.now()
         return super().write(vals)
     
     @api.onchange('customer_id')
