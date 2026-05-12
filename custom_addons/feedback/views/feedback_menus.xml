@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Action: Daftar Feedback -->
+        <record id="feedback_action_list" model="ir.actions.act_window">
+            <field name="name">Daftar Feedback</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">feedback.feedback</field>
+            <field name="view_mode">tree,form,graph</field>
+            <field name="target">current</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Belum ada feedback. Tambahkan feedback pelanggan pertama!
+                </p>
+            </field>
+        </record>
+
+        <!-- Action: Buat Feedback Baru -->
+        <record id="feedback_action_new" model="ir.actions.act_window">
+            <field name="name">Tambah Feedback</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">feedback.feedback</field>
+            <field name="view_mode">form</field>
+            <field name="target">current</field>
+        </record>
+
+        <!-- Root Menu -->
+        <menuitem
+            id="feedback_menu_root"
+            name="Feedback"
+            sequence="40"/>
+
+        <!-- Child: Daftar Feedback -->
+        <menuitem
+            id="feedback_menu_list"
+            name="Daftar Feedback"
+            parent="feedback_menu_root"
+            action="feedback_action_list"
+            sequence="10"/>
+
+        <!-- Child: Tambah Feedback -->
+        <menuitem
+            id="feedback_menu_create"
+            name="Tambah Feedback"
+            parent="feedback_menu_root"
+            action="feedback_action_new"
+            sequence="20"/>
+
+    </data>
+</odoo>
