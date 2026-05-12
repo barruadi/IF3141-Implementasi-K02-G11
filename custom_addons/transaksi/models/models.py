@@ -6,12 +6,14 @@ class TransactionEcoethno(models.Model):
     _name = 'transaksi.transaksi'
     _description = 'Transaksi Ecoethno'
     _rec_name = 'no_transaksi'
+    _sql_constraints = [
+        ('no_transaksi_uniq', 'unique(no_transaksi)', 'Nomor transaksi harus unik.')
+    ]
 
     # Field Utama
     no_transaksi = fields.Char(
         string='No. Transaksi',
         required=True,
-        unique=True,
         readonly=True,
         default=lambda self: self.env['ir.sequence'].next_by_code('transaksi.transaksi') or 'TRANS/000000'
     )
@@ -22,13 +24,27 @@ class TransactionEcoethno(models.Model):
         default=fields.Date.today
     )
     
-    # Relasi dengan Pelanggan
+    # =============================================
+    # Relasi dengan Reservasi (FK sesuai ERD D-04)
+    # =============================================
+    reservasi_id = fields.Many2one(
+        'reservasi.reservasi',
+        string='Reservasi',
+        required=True,
+        domain="[('status_reservasi', 'in', ['confirmed', 'done'])]",
+        help='Pilih reservasi yang akan dicatat transaksinya'
+    )
+    
+    # =============================================
+    # Related Fields (otomatis dari Reservasi)
+    # =============================================
     customer_id = fields.Many2one(
         'res.partner',
         string='Pelanggan',
-        required=True,
-        readonly=False,
-        help='Pilih pelanggan yang melakukan transaksi'
+        related='reservasi_id.customer_id',
+        store=True,
+        readonly=True,
+        help='Pelanggan dari reservasi terkait'
     )
     
     customer_name = fields.Char(
@@ -45,56 +61,53 @@ class TransactionEcoethno(models.Model):
         store=True
     )
     
-    # Data Reservasi
-    no_reservasi = fields.Char(
-        string='No. Reservasi',
-        required=True,
-        help='Nomor reservasi dari pelanggan'
-    )
-    
     tanggal_kegiatan = fields.Date(
         string='Tanggal Kegiatan',
-        required=True,
-        help='Tanggal pelaksanaan kegiatan/layanan'
+        related='reservasi_id.tanggal_kunjungan',
+        store=True,
+        readonly=True,
+        help='Tanggal kunjungan dari reservasi terkait'
     )
     
-    # Paket Layanan
-    paket_layanan = fields.Selection(
-        selection=[
-            ('camping', 'Camping'),
-            ('outbound', 'Outbound'),
-            ('event_organizer', 'Event Organizer'),
-            ('workshop', 'Workshop'),
-            ('lainnya', 'Lainnya'),
-        ],
-        string='Paket Layanan',
-        required=True,
-        help='Pilih jenis paket layanan yang dipilih pelanggan'
-    )
-    
-    deskripsi_paket = fields.Text(
-        string='Deskripsi Paket',
-        help='Deskripsi detail tentang paket layanan'
-    )
-    
-    # Detail Peserta
     jumlah_peserta = fields.Integer(
         string='Jumlah Peserta',
-        required=True,
-        default=1,
-        help='Total jumlah peserta/tamu'
+        related='reservasi_id.jumlah_peserta',
+        store=True,
+        readonly=True,
+        help='Jumlah peserta dari reservasi terkait'
     )
     
-    # Nilai Transaksi
-    harga_satuan = fields.Float(
+    platform_pemesanan = fields.Selection(
+        related='reservasi_id.platform_pemesanan',
+        string='Platform Pemesanan',
+        store=True,
+        readonly=True,
+        help='Platform pemesanan dari reservasi terkait'
+    )
+
+    # =============================================
+    # Data Keuangan Transaksi
+    # =============================================
+    currency_id = fields.Many2one(
+        'res.currency',
+        string='Mata Uang',
+        default=lambda self: self.env.company.currency_id,
+        required=True,
+        readonly=True,
+        help='Mata uang transaksi'
+    )
+    
+    harga_satuan = fields.Monetary(
         string='Harga Satuan (per peserta)',
+        currency_field='currency_id',
         required=True,
         default=0.0,
         help='Harga per peserta'
     )
     
-    nilai_transaksi = fields.Float(
+    nilai_transaksi = fields.Monetary(
         string='Nilai Transaksi (Rp)',
+        currency_field='currency_id',
         compute='_compute_nilai_transaksi',
         store=True,
         readonly=True,
@@ -131,21 +144,6 @@ class TransactionEcoethno(models.Model):
         ],
         string='Metode Pembayaran',
         help='Cara pembayaran yang digunakan'
-    )
-    
-    # Platform Pemesanan
-    platform_pemesanan = fields.Selection(
-        selection=[
-            ('traveloka', 'Traveloka'),
-            ('whatsapp', 'WhatsApp'),
-            ('website', 'Website'),
-            ('telepon', 'Telepon'),
-            ('email', 'Email'),
-            ('langsung', 'Langsung'),
-            ('lainnya', 'Lainnya'),
-        ],
-        string='Platform Pemesanan',
-        help='Channel mana transaksi ini berasal'
     )
     
     # Catatan Tambahan
@@ -199,11 +197,18 @@ class TransactionEcoethno(models.Model):
     def write(self, vals):
         """Override write untuk mencatat user yang mengupdate record"""
         vals['updated_by'] = self.env.user.id
+        vals['updated_at'] = fields.Datetime.now()
         return super().write(vals)
-    
-    @api.onchange('customer_id')
-    def _onchange_customer_id(self):
-        """Update informasi pelanggan ketika customer_id berubah"""
-        if self.customer_id:
-            self.customer_name = self.customer_id.name
-            self.customer_phone = self.customer_id.phone
+
+
+class ReservasiInherit(models.Model):
+    """Extend reservasi model to add reverse relation to transaksi"""
+    _inherit = 'reservasi.reservasi'
+
+    transaksi_ids = fields.One2many(
+        'transaksi.transaksi',
+        'reservasi_id',
+        string='Transaksi Terkait',
+        help='Daftar transaksi yang terkait dengan reservasi ini'
+    )
+

@@ -14,14 +14,16 @@
                             </h1>
                         </div>
 
-                        <!-- TAB 1: Informasi Umum -->
+                        <!-- TAB NOTEBOOK -->
                         <notebook>
+                            <!-- TAB 1: Informasi Umum -->
                             <page string="Informasi Umum">
                                 <group>
                                     <group string="Data Transaksi">
                                         <field name="tanggal_transaksi" />
-                                        <field name="no_reservasi" />
-                                        <field name="tanggal_kegiatan" />
+                                        <field name="reservasi_id" options="{'no_create': True}" />
+                                        <field name="tanggal_kegiatan" readonly="1" />
+                                        <field name="currency_id" invisible="1"/>
                                     </group>
                                     <group string="Status Pembayaran">
                                         <field name="status_pembayaran" widget="radio" />
@@ -29,48 +31,35 @@
                                         <field name="metode_pembayaran" />
                                     </group>
                                 </group>
-
-                                <group string="Informasi Platform">
-                                    <field name="platform_pemesanan" />
-                                </group>
                             </page>
 
-                            <!-- TAB 2: Informasi Pelanggan -->
+                            <!-- TAB 2: Informasi Pelanggan (dari Reservasi) -->
                             <page string="Informasi Pelanggan">
                                 <group>
-                                    <group string="Data Pelanggan">
-                                        <field name="customer_id" />
+                                    <group string="Data Pelanggan (otomatis dari Reservasi)">
+                                        <field name="customer_id" readonly="1" />
                                         <field name="customer_name" readonly="1" />
                                         <field name="customer_phone" readonly="1" />
                                     </group>
-                                </group>
-                            </page>
-
-                            <!-- TAB 3: Detail Layanan -->
-                            <page string="Detail Layanan">
-                                <group>
-                                    <group string="Paket Layanan">
-                                        <field name="paket_layanan" />
-                                        <field name="deskripsi_paket" />
-                                    </group>
-                                    <group string="Detail Peserta">
-                                        <field name="jumlah_peserta" />
+                                    <group string="Detail Reservasi">
+                                        <field name="jumlah_peserta" readonly="1" />
+                                        <field name="platform_pemesanan" readonly="1" />
                                     </group>
                                 </group>
                             </page>
 
-                            <!-- TAB 4: Nilai Transaksi -->
+                            <!-- TAB 3: Nilai Transaksi -->
                             <page string="Nilai Transaksi">
                                 <group>
                                     <group string="Perhitungan Harga">
                                         <field name="harga_satuan" widget="monetary" />
-                                        <field name="jumlah_peserta" />
+                                        <field name="jumlah_peserta" readonly="1" />
                                         <field name="nilai_transaksi" widget="monetary" />
                                     </group>
                                 </group>
                             </page>
 
-                            <!-- TAB 5: Catatan &amp; Audit -->
+                            <!-- TAB 4: Catatan & Audit -->
                             <page string="Catatan &amp; Audit">
                                 <group>
                                     <group string="Catatan">
@@ -94,8 +83,6 @@
                 </form>
             </field>
         </record>
-
-
 
     </data>
 </odoo>

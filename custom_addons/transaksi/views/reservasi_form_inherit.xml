@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Inherit Reservasi Form: Tambah tab Transaksi Terkait -->
+        <record id="view_reservasi_form_inherit_transaksi" model="ir.ui.view">
+            <field name="name">reservasi.reservasi.form.inherit.transaksi</field>
+            <field name="model">reservasi.reservasi</field>
+            <field name="inherit_id" ref="reservasi.view_reservasi_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="inside">
+                    <notebook>
+                        <page string="Transaksi Terkait">
+                            <field name="transaksi_ids" readonly="1">
+                                <tree string="Daftar Transaksi">
+                                    <field name="no_transaksi"/>
+                                    <field name="tanggal_transaksi"/>
+                                    <field name="nilai_transaksi"/>
+                                    <field name="status_pembayaran"/>
+                                    <field name="metode_pembayaran"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

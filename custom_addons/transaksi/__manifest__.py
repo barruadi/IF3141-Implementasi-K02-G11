@@ -12,14 +12,19 @@
     'author': 'Kelompok 11 - K02 IF3141',
     'category': 'Sales',
     'version': '1.0',
-    'depends': ['base', 'sale', 'crm'],
+    'depends': ['base', 'sale', 'crm', 'reservasi'],
     'data': [
         'security/ir.model.access.csv',
+        'data/transaksi_sequence.xml',
         'views/transaksi_menus.xml',
         'views/transaksi_forms.xml',
         'views/transaksi_trees.xml',
+        'views/reservasi_form_inherit.xml',
     ],
     'installable': True,
     'application': True,
     'auto_install': False,
+    'demo': [
+        'data/transaksi_demo.xml',
+    ],
 }
