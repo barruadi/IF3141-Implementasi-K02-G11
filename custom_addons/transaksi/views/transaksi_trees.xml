@@ -10,8 +10,7 @@
                     <field name="no_transaksi" />
                     <field name="tanggal_transaksi" />
                     <field name="customer_name" />
-                    <field name="no_reservasi" />
-                    <field name="paket_layanan" />
+                    <field name="reservasi_id" />
                     <field name="jumlah_peserta" />
                     <field name="nilai_transaksi" sum="Total Transaksi" />
                     <field name="status_pembayaran" />
@@ -41,22 +40,6 @@
                     
                     <separator/>
 
-                    <!-- Filter: Berdasarkan Paket Layanan -->
-                    <filter name="filter_camping" 
-                            string="Camping" 
-                            domain="[('paket_layanan', '=', 'camping')]" />
-                    <filter name="filter_outbound" 
-                            string="Outbound" 
-                            domain="[('paket_layanan', '=', 'outbound')]" />
-                    <filter name="filter_event_organizer" 
-                            string="Event Organizer" 
-                            domain="[('paket_layanan', '=', 'event_organizer')]" />
-                    <filter name="filter_workshop" 
-                            string="Workshop" 
-                            domain="[('paket_layanan', '=', 'workshop')]" />
-
-                    <separator/>
-
                     <!-- Grouping -->
                     <group expand="0" string="Kelompokkan Berdasarkan">
                         <filter name="group_by_customer" 
@@ -65,9 +48,9 @@
                         <filter name="group_by_status" 
                                 string="Status Pembayaran" 
                                 context="{'group_by': 'status_pembayaran'}" />
-                        <filter name="group_by_paket" 
-                                string="Paket Layanan" 
-                                context="{'group_by': 'paket_layanan'}" />
+                        <filter name="group_by_reservasi" 
+                                string="Reservasi" 
+                                context="{'group_by': 'reservasi_id'}" />
                         <filter name="group_by_platform" 
                                 string="Platform Pemesanan" 
                                 context="{'group_by': 'platform_pemesanan'}" />
@@ -79,7 +62,7 @@
                     <!-- Pencarian -->
                     <field name="no_transaksi" />
                     <field name="customer_name" />
-                    <field name="no_reservasi" />
+                    <field name="reservasi_id" />
                 </search>
             </field>
         </record>
@@ -90,7 +73,7 @@
             <field name="model">transaksi.transaksi</field>
             <field name="arch" type="xml">
                 <pivot string="Analisis Transaksi">
-                    <field name="paket_layanan" type="row" />
+                    <field name="reservasi_id" type="row" />
                     <field name="status_pembayaran" type="column" />
                     <field name="nilai_transaksi" type="measure" />
                 </pivot>
@@ -103,13 +86,11 @@
             <field name="model">transaksi.transaksi</field>
             <field name="arch" type="xml">
                 <graph string="Grafik Transaksi" type="bar">
-                    <field name="paket_layanan" type="row" />
+                    <field name="reservasi_id" type="row" />
                     <field name="nilai_transaksi" type="measure" />
                 </graph>
             </field>
         </record>
-
-
 
     </data>
 </odoo>
