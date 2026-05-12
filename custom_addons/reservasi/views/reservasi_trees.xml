@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- TREE VIEW -->
+    <record id="view_reservasi_tree" model="ir.ui.view">
+        <field name="name">reservasi.reservasi.tree</field>
+        <field name="model">reservasi.reservasi</field>
+
+        <field name="arch" type="xml">
+            <tree>
+                <field name="nama_reservasi"/>
+                <field name="customer_id"/>
+                <field name="tanggal_kunjungan"/>
+                <field name="jumlah_peserta"/>
+                <field name="status_reservasi"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- CALENDAR VIEW -->
+    <record id="view_reservasi_calendar" model="ir.ui.view">
+        <field name="name">reservasi.reservasi.calendar</field>
+        <field name="model">reservasi.reservasi</field>
+
+        <field name="arch" type="xml">
+            <calendar
+                string="Reservasi"
+                date_start="tanggal_kunjungan"
+                color="status_reservasi"
+                mode="month"
+                event_open_popup="false"
+            >
+                <field name="nama_reservasi"/>
+                <field name="customer_id"/>
+                <field name="status_reservasi"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- SEARCH VIEW -->
+    <record id="view_reservasi_search" model="ir.ui.view">
+        <field name="name">reservasi.reservasi.search</field>
+        <field name="model">reservasi.reservasi</field>
+
+        <field name="arch" type="xml">
+            <search>
+                <field name="nama_reservasi"/>
+                <field name="customer_id"/>
+                <field name="status_reservasi"/>
+
+                <filter
+                    name="confirmed"
+                    string="Confirmed"
+                    domain="[('status_reservasi','=','confirmed')]"
+                />
+
+                <filter
+                    name="done"
+                    string="Done"
+                    domain="[('status_reservasi','=','done')]"
+                />
+            </search>
+        </field>
+    </record>
+
+</odoo>

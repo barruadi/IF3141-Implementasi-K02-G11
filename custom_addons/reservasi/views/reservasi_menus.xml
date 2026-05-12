@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ACTION -->
+    <record id="action_reservasi" model="ir.actions.act_window">
+        <field name="name">Reservasi</field>
+        <field name="res_model">reservasi.reservasi</field>
+        <field name="view_mode">calendar,tree,form</field>
+    </record>
+
+    <!-- ROOT MENU -->
+    <menuitem
+        id="reservation_root_menu"
+        name="Reservasi"
+        sequence="10"
+    />
+
+    <!-- CHILD MENU -->
+    <menuitem
+        id="reservation_menu"
+        name="Kalender Reservasi"
+        parent="reservation_root_menu"
+        action="action_reservasi"
+        sequence="1"
+    />
+
+</odoo>
