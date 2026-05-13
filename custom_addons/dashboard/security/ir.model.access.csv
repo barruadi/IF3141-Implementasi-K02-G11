@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_dashboard_ecoethno_admin,dashboard.ecoethno.admin,model_dashboard_ecoethno,user_management.group_ecoethno_admin,1,0,0,0
+access_dashboard_ecoethno_manager,dashboard.ecoethno.manager,model_dashboard_ecoethno,user_management.group_ecoethno_manager,1,0,0,0
+access_dashboard_ecoethno_erp_manager,dashboard.ecoethno.erp.manager,model_dashboard_ecoethno,base.group_erp_manager,1,0,0,0

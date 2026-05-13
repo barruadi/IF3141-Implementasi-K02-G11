@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="action_dashboard_ecoethno" model="ir.actions.client">
+            <field name="name">Dashboard</field>
+            <field name="tag">dashboard.ecoethno_client_action</field>
+        </record>
+
+        <menuitem
+            id="menu_dashboard_ecoethno_root"
+            name="Dashboard"
+            action="action_dashboard_ecoethno"
+            groups="user_management.group_ecoethno_admin,user_management.group_ecoethno_manager,base.group_erp_manager"
+            sequence="0"/>
+    </data>
+</odoo>

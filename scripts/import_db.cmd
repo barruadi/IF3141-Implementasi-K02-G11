@@ -50,11 +50,11 @@ echo Recreating database...
 %DC% exec -T db createdb -U odoo postgres || goto :error
 
 echo Restoring database from: %IN_FILE%
-%DC% exec -T db pg_restore -U odoo -d postgres --no-owner --clean < "%IN_FILE%"
+%DC% exec -T db pg_restore -U odoo -d postgres --no-owner --clean --if-exists < "%IN_FILE%"
 
 if exist "%FS_FILE%" (
 	echo Restoring filestore from: %FS_FILE%
-	%DC% run --rm -v odoo-web-data:/filestore alpine sh -c "rm -rf /filestore/* && tar xzf - -C /filestore" < "%FS_FILE%" || goto :error
+	%DC% run --rm -T -v odoo-web-data:/filestore alpine sh -c "rm -rf /filestore/* && tar xzf - -C /filestore" < "%FS_FILE%" || goto :error
 ) else (
 	echo Warning: No filestore backup found at %FS_FILE%, skipping.
 )
