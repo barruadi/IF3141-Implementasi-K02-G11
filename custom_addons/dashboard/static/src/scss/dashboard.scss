@@ -1,8 +1,18 @@
 .o_eco_dashboard {
-    min-height: 100%;
+    box-sizing: border-box;
+    height: 100%;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
     background: #f0f2f5;
     color: rgba(0, 0, 0, 0.85);
     font-family: Roboto, Arial, sans-serif;
+}
+
+.o_eco_dashboard *,
+.o_eco_dashboard *::before,
+.o_eco_dashboard *::after {
+    box-sizing: border-box;
 }
 
 .o_eco_page_header {
