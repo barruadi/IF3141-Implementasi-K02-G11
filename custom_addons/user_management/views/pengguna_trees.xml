@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_pengguna_tree" model="ir.ui.view">
+        <field name="name">pengguna.tree</field>
+        <field name="model">user_management.pengguna</field>
+        <field name="arch" type="xml">
+
+            <tree string="User Management">
+                <field name="nama"/>
+                <field name="jabatan"/>
+                <field name="divisi"/>
+                <field name="hak_akses"/>
+                <field name="status_aktif"/>
+            </tree>
+
+        </field>
+    </record>
+
+</odoo>
