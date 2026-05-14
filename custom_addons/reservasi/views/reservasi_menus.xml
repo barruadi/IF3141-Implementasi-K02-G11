@@ -13,6 +13,7 @@
         id="reservation_root_menu"
         name="Reservasi"
         sequence="10"
+        groups="user_management.group_ecoethno_admin"
     />
 
     <!-- CHILD MENU -->
@@ -22,6 +23,7 @@
         parent="reservation_root_menu"
         action="action_reservasi"
         sequence="1"
+        groups="user_management.group_ecoethno_admin"
     />
 
 </odoo>
