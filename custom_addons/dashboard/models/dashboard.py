@@ -4,7 +4,7 @@ from datetime import datetime, time, timedelta
 from dateutil.relativedelta import relativedelta
 
 from odoo import fields, models
-from odoo.exceptions import AccessError
+from odoo.exceptions import AccessError, UserError
 
 
 class DashboardEcoethno(models.AbstractModel):
@@ -42,7 +42,12 @@ class DashboardEcoethno(models.AbstractModel):
         today = fields.Date.context_today(self)
         period = period if period in self._ALLOWED_PERIODS else 'year'
 
-        if period == 'day':
+        if period == 'custom':
+            if not date_start or not date_end:
+                raise UserError('Tanggal mulai dan tanggal akhir wajib diisi.')
+            start_date = fields.Date.to_date(date_start)
+            end_date = fields.Date.to_date(date_end)
+        elif period == 'day':
             start_date = end_date = today
         elif period == 'week':
             start_date = today - timedelta(days=today.weekday())
@@ -54,12 +59,8 @@ class DashboardEcoethno(models.AbstractModel):
             start_date = today.replace(month=1, day=1)
             end_date = today.replace(month=12, day=31)
 
-        if period == 'custom' or date_start or date_end:
-            start_date = fields.Date.to_date(date_start) if date_start else start_date
-            end_date = fields.Date.to_date(date_end) if date_end else end_date
-
         if start_date > end_date:
-            start_date, end_date = end_date, start_date
+            raise UserError('Tanggal mulai tidak boleh lebih besar dari tanggal akhir.')
 
         return start_date, end_date
 
@@ -109,14 +110,14 @@ class DashboardEcoethno(models.AbstractModel):
         return [
             {
                 'key': 'revenue',
-                'label': 'Total Revenue',
+                'label': 'Pendapatan',
                 'value': revenue_total,
                 'daily_value': revenue_daily,
                 'type': 'currency',
             },
             {
                 'key': 'transactions',
-                'label': 'Transactions',
+                'label': 'Transaksi',
                 'value': transactions_total,
                 'daily_value': transactions_daily,
                 'type': 'number',
@@ -130,7 +131,7 @@ class DashboardEcoethno(models.AbstractModel):
             },
             {
                 'key': 'inventory',
-                'label': 'Inventory',
+                'label': 'Inventaris',
                 'value': inventory_total,
                 'daily_value': inventory_daily,
                 'type': 'number',
@@ -144,37 +145,53 @@ class DashboardEcoethno(models.AbstractModel):
         return groups[0].get(field_name) or 0
 
     def _get_reservation_trend(self, start_date, end_date):
+        groupby, step, key_format, label_format = self._get_trend_bucket_config(start_date, end_date)
         labels = []
         counts = {}
-        cursor = start_date.replace(day=1)
-        final_month = end_date.replace(day=1)
-        while cursor <= final_month:
-            month_key = cursor.strftime('%Y-%m')
+        cursor = self._trend_bucket_start(start_date, groupby)
+        final_bucket = self._trend_bucket_start(end_date, groupby)
+        while cursor <= final_bucket:
+            bucket_key = cursor.strftime(key_format)
             labels.append({
-                'key': month_key,
-                'label': cursor.strftime('%b'),
+                'key': bucket_key,
+                'label': cursor.strftime(label_format),
                 'count': 0,
             })
-            counts[month_key] = 0
-            cursor += relativedelta(months=1)
+            counts[bucket_key] = 0
+            cursor += step
 
         groups = self.env['reservasi.reservasi'].sudo().read_group(
             self._date_domain('tanggal_kunjungan', start_date, end_date),
             ['tanggal_kunjungan'],
-            ['tanggal_kunjungan:month'],
+            [f'tanggal_kunjungan:{groupby}'],
         )
         for group in groups:
-            range_info = group.get('__range', {}).get('tanggal_kunjungan:month', {})
+            range_info = group.get('__range', {}).get(f'tanggal_kunjungan:{groupby}', {})
             range_start = range_info.get('from')
             if not range_start:
                 continue
-            month_key = fields.Date.to_date(range_start).strftime('%Y-%m')
-            if month_key in counts:
-                counts[month_key] = self._group_count(group, 'tanggal_kunjungan')
+            bucket_key = fields.Date.to_date(range_start).strftime(key_format)
+            if bucket_key in counts:
+                counts[bucket_key] = self._group_count(group, 'tanggal_kunjungan')
 
         for item in labels:
             item['count'] = counts[item['key']]
         return labels
+
+    def _get_trend_bucket_config(self, start_date, end_date):
+        day_count = (end_date - start_date).days + 1
+        if day_count <= 31:
+            return 'day', relativedelta(days=1), '%Y-%m-%d', '%d %b'
+        if day_count <= 366:
+            return 'month', relativedelta(months=1), '%Y-%m', '%b'
+        return 'year', relativedelta(years=1), '%Y', '%Y'
+
+    def _trend_bucket_start(self, date_value, groupby):
+        if groupby == 'year':
+            return date_value.replace(month=1, day=1)
+        if groupby == 'month':
+            return date_value.replace(day=1)
+        return date_value
 
     def _get_visit_distribution(self, start_date, end_date):
         reservation_model = self.env['reservasi.reservasi'].sudo()
@@ -242,9 +259,8 @@ class DashboardEcoethno(models.AbstractModel):
             self._get_inventory_domain(),
             ['product_id', 'quantity:sum'],
             ['product_id'],
-            limit=5,
         )
-        sorted_groups = sorted(groups, key=lambda group: group.get('quantity') or 0, reverse=True)
+        sorted_groups = sorted(groups, key=lambda group: group.get('quantity') or 0, reverse=True)[:5]
         product_ids = [
             group['product_id'][0]
             for group in sorted_groups

@@ -8,6 +8,7 @@ export class EcoethnoDashboard extends Component {
     setup() {
         this.orm = useService("orm");
         this.action = useService("action");
+        this.loadSequence = 0;
         this.state = useState({
             loading: true,
             error: false,
@@ -31,19 +32,29 @@ export class EcoethnoDashboard extends Component {
     }
 
     async loadData() {
+        const sequence = ++this.loadSequence;
         this.state.loading = true;
         this.state.error = false;
         try {
-            this.state.data = await this.orm.call(
+            const data = await this.orm.call(
                 "dashboard.ecoethno",
                 "get_dashboard_data",
                 [this.state.period, this.state.dateStart || false, this.state.dateEnd || false]
             );
+            if (sequence !== this.loadSequence) {
+                return;
+            }
+            this.state.data = data;
         } catch (error) {
-            this.state.error = error.message || "Dashboard gagal dimuat.";
+            if (sequence !== this.loadSequence) {
+                return;
+            }
+            this.state.error = this.getErrorMessage(error);
             this.state.data = this.emptyData();
         } finally {
-            this.state.loading = false;
+            if (sequence === this.loadSequence) {
+                this.state.loading = false;
+            }
         }
     }
 
@@ -59,13 +70,37 @@ export class EcoethnoDashboard extends Component {
     async onDateStartChange(ev) {
         this.state.dateStart = ev.target.value;
         this.state.period = "custom";
-        await this.loadData();
+        this.state.error = false;
     }
 
     async onDateEndChange(ev) {
         this.state.dateEnd = ev.target.value;
         this.state.period = "custom";
+        this.state.error = false;
+    }
+
+    async applyCustomDate() {
+        this.state.period = "custom";
+        if (!this.state.dateStart || !this.state.dateEnd) {
+            this.state.error = "Tanggal mulai dan tanggal akhir wajib diisi.";
+            return;
+        }
+        if (this.state.dateStart > this.state.dateEnd) {
+            this.state.error = "Tanggal mulai tidak boleh lebih besar dari tanggal akhir.";
+            return;
+        }
         await this.loadData();
+    }
+
+    async resetFilters() {
+        this.state.period = "year";
+        this.state.dateStart = "";
+        this.state.dateEnd = "";
+        await this.loadData();
+    }
+
+    getErrorMessage(error) {
+        return error?.data?.message || error?.message || "Dashboard gagal dimuat.";
     }
 
     openRecordFromDataset(ev) {
@@ -87,6 +122,10 @@ export class EcoethnoDashboard extends Component {
         return `o_eco_dashboard_filter${this.state.period === period ? " is-active" : ""}`;
     }
 
+    get customApplyDisabled() {
+        return this.state.loading || !this.state.dateStart || !this.state.dateEnd;
+    }
+
     formatCardValue(card) {
         if (card.type === "currency") {
             return this.formatCurrency(card.value);
@@ -102,15 +141,19 @@ export class EcoethnoDashboard extends Component {
     }
 
     formatCurrency(value) {
-        return `Rp${this.formatNumber(value)}`;
+        return new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            maximumFractionDigits: 0,
+        }).format(value || 0);
     }
 
     formatNumber(value) {
-        return new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value || 0);
+        return new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 }).format(value || 0);
     }
 
     formatQuantity(value) {
-        return new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(value || 0);
+        return new Intl.NumberFormat("id-ID", { maximumFractionDigits: 2 }).format(value || 0);
     }
 
     formatDate(value) {

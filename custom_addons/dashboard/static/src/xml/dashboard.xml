@@ -7,18 +7,20 @@
                 <div class="o_eco_header_row">
                     <h1>Dashboard</h1>
                     <div class="o_eco_filters">
-                        <button type="button" t-att-class="periodButtonClass('day')" data-period="day" t-on-click="onPeriodClick">All day</button>
-                        <button type="button" t-att-class="periodButtonClass('week')" data-period="week" t-on-click="onPeriodClick">All week</button>
-                        <button type="button" t-att-class="periodButtonClass('month')" data-period="month" t-on-click="onPeriodClick">All month</button>
-                        <button type="button" t-att-class="periodButtonClass('year')" data-period="year" t-on-click="onPeriodClick">All year</button>
+                        <button type="button" t-att-class="periodButtonClass('day')" data-period="day" t-on-click="onPeriodClick">Hari ini</button>
+                        <button type="button" t-att-class="periodButtonClass('week')" data-period="week" t-on-click="onPeriodClick">Minggu ini</button>
+                        <button type="button" t-att-class="periodButtonClass('month')" data-period="month" t-on-click="onPeriodClick">Bulan ini</button>
+                        <button type="button" t-att-class="periodButtonClass('year')" data-period="year" t-on-click="onPeriodClick">Tahun ini</button>
                         <input class="o_eco_date_input" type="date" t-att-value="state.dateStart" t-on-change="onDateStartChange"/>
-                        <span class="o_eco_date_separator">to</span>
+                        <span class="o_eco_date_separator">sampai</span>
                         <input class="o_eco_date_input" type="date" t-att-value="state.dateEnd" t-on-change="onDateEndChange"/>
+                        <button type="button" class="o_eco_action_button" t-att-disabled="customApplyDisabled" t-on-click="applyCustomDate">Terapkan</button>
+                        <button type="button" class="o_eco_secondary_button" t-on-click="resetFilters">Reset</button>
                     </div>
                 </div>
             </div>
 
-            <div t-if="state.loading" class="o_eco_loading">Loading dashboard...</div>
+            <div t-if="state.loading" class="o_eco_loading">Memuat dashboard...</div>
             <div t-elif="state.error" class="o_eco_error" t-esc="state.error"/>
             <div t-else="" class="o_eco_content">
                 <section class="o_eco_cards">
@@ -31,7 +33,7 @@
                             <div class="o_eco_card_value" t-esc="formatCardValue(card)"/>
                             <div class="o_eco_divider"/>
                             <div class="o_eco_card_daily">
-                                <span>Daily</span>
+                                <span>Hari ini</span>
                                 <strong t-esc="formatCardDaily(card)"/>
                             </div>
                         </article>
@@ -41,9 +43,9 @@
                 <section class="o_eco_chart_grid">
                     <article class="o_eco_panel o_eco_trend_panel">
                         <div class="o_eco_panel_tabs">
-                            <span class="is-active">Visits</span>
+                            <span class="is-active">Kunjungan</span>
                         </div>
-                        <h2>Stores Sales Trend</h2>
+                        <h2>Tren Reservasi</h2>
                         <div t-if="state.data.reservation_trend.length" class="o_eco_bar_chart">
                             <t t-foreach="state.data.reservation_trend" t-as="point" t-key="point.key">
                                 <div class="o_eco_bar_item">
@@ -59,7 +61,7 @@
 
                     <article class="o_eco_panel o_eco_donut_panel">
                         <div class="o_eco_panel_title">
-                            <span>Visits</span>
+                            <span>Kunjungan</span>
                             <span class="o_eco_info_icon">i</span>
                         </div>
                         <div class="o_eco_donut_wrap">
@@ -80,19 +82,19 @@
                 </section>
 
                 <section class="o_eco_panel o_eco_table_panel">
-                    <h2>Recent Reservations</h2>
+                    <h2>Reservasi Terbaru</h2>
                     <div class="o_eco_table_scroll">
                         <table class="o_eco_table">
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Description</th>
-                                    <th>Customer</th>
-                                    <th>Visit Date</th>
-                                    <th>Participants</th>
+                                    <th>Deskripsi</th>
+                                    <th>Pelanggan</th>
+                                    <th>Tanggal Kunjungan</th>
+                                    <th>Peserta</th>
                                     <th>Status</th>
                                     <th>Platform</th>
-                                    <th>Action</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -119,17 +121,17 @@
                 </section>
 
                 <section class="o_eco_panel o_eco_table_panel">
-                    <h2>Inventory</h2>
+                    <h2>Inventaris</h2>
                     <div class="o_eco_table_scroll">
                         <table class="o_eco_table">
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Description</th>
-                                    <th>Stocks</th>
+                                    <th>Deskripsi</th>
+                                    <th>Stok</th>
                                     <th>Status</th>
-                                    <th>Categories</th>
-                                    <th>Action</th>
+                                    <th>Kategori</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
