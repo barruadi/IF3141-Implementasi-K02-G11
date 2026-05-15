@@ -49,6 +49,13 @@ Tangkapan layar sebagai ilustrasi dapat diakses melalui tautan berikut: ```https
 9. Tabel “Inventaris” untuk memantau stok barang. Tekan tombol “Detail” pada baris tertentu apabila ingin membuka formulir item inventaris tersebut
 
 ### C. Manajemen Inventaris
+1. Sistem akan menampilkan daftar barang ketika menekan bagian inventaris.
+2. Sistem akan menampilkan stok, kategori, deskripsi, serta status barang dalam tabel.
+3. Untuk menambah barang, tekan tombol new dan masukan info barang. Setelah itu tekan tombol selesai.
+4. Untuk menghapus barang, tekan tombol delete lalu konfirmasi. Selain itu, dapat juga dengan menekan tombol check list pada bagian kiri tabel dan menekan action dan delete.
+5. Untuk mengganti detail barang, tekan tombol edit di kanan barang.
+6. Untuk mengganti status banyak barang sekaligus, tekan tombol checklist dan tekan action dan ganti ke Digunakan atau Aktif.
+7. Bagian Kategori adalah bagian untuk mengatur kategori.
 
 ### D. Manajemen Pengguna
 1. Klik menu “User Management” pada navigation bar sistem. 
