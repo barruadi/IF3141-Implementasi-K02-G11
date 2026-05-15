@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="inventory_view_tree" model="ir.ui.view">
+            <field name="name">inventory.item.tree</field>
+            <field name="model">inventory.item</field>
+            <field name="arch" type="xml">
+                <tree string="Daftar Inventaris">
+                    <field name="item_id"/>
+                    <field name="description"/>
+                    <field name="stocks"/>
+                    <field name="status" widget="badge"
+                           decoration-success="status == 'aktif'"
+                           decoration-danger="status == 'digunakan'"/>
+                    <field name="category_ids" widget="many2many_tags"/>
+                    <button name="action_edit" string="Edit" type="object" icon="fa-pencil" title="Edit"/>
+                    <button name="action_detail" string="Detail" type="object" icon="fa-eye" title="Detail"/>
+                    <button name="action_delete" string="Delete" type="object" icon="fa-trash" title="Delete"
+                            confirm="Yakin ingin menghapus barang ini?"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="inventory_view_search" model="ir.ui.view">
+            <field name="name">inventory.item.search</field>
+            <field name="model">inventory.item</field>
+            <field name="arch" type="xml">
+                <search string="Cari Inventaris">
+                    <field name="item_id" string="ID"/>
+                    <field name="description" string="Deskripsi"/>
+                    <filter name="filter_aktif" string="Aktif"
+                            domain="[('status', '=', 'aktif')]"/>
+                    <filter name="filter_digunakan" string="Digunakan"
+                            domain="[('status', '=', 'digunakan')]"/>
+                    <separator/>
+                    <group expand="0" string="Kelompokkan Berdasarkan">
+                        <filter name="group_by_status" string="Status"
+                                context="{'group_by': 'status'}"/>
+                        <filter name="group_by_category" string="Kategori"
+                                context="{'group_by': 'category_ids'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+    </data>
+</odoo>

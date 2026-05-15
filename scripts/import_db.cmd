@@ -45,6 +45,14 @@ echo Stopping web container...
 echo Starting db container...
 %DC% up -d db || goto :error
 
+echo Waiting for database to be ready...
+:wait_loop
+%DC% exec -T db pg_isready -U odoo -q >nul 2>&1
+if %errorlevel% neq 0 (
+	timeout /t 1 /nobreak >nul
+	goto :wait_loop
+)
+
 echo Recreating database...
 %DC% exec -T db dropdb -U odoo --if-exists postgres || goto :error
 %DC% exec -T db createdb -U odoo postgres || goto :error

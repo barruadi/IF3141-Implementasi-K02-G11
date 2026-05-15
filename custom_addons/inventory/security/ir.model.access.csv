@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+inventory_item_user,Inventory Item User Access,model_inventory_item,base.group_user,1,1,1,0
+inventory_item_manager,Inventory Item Manager Access,model_inventory_item,base.group_erp_manager,1,1,1,1
+inventory_category_user,Inventory Category User Access,model_inventory_category,base.group_user,1,1,1,0
+inventory_category_manager,Inventory Category Manager Access,model_inventory_category,base.group_erp_manager,1,1,1,1

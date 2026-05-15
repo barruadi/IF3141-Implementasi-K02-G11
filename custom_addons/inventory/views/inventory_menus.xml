@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="inventory_action_list" model="ir.actions.act_window">
+            <field name="name">Daftar Barang</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">inventory.item</field>
+            <field name="view_mode">tree</field>
+            <field name="target">current</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Belum ada barang. Tambahkan barang inventaris pertama!
+                </p>
+            </field>
+        </record>
+
+        <record id="inventory_action_new" model="ir.actions.act_window">
+            <field name="name">Tambah Barang</field>
+            <field name="res_model">inventory.item</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="inventory_category_action" model="ir.actions.act_window">
+            <field name="name">Kategori</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">inventory.category</field>
+            <field name="view_mode">tree,form</field>
+            <field name="target">current</field>
+        </record>
+
+        <record id="action_set_aktif" model="ir.actions.server">
+            <field name="name">Set ke Aktif</field>
+            <field name="model_id" ref="model_inventory_item"/>
+            <field name="binding_model_id" ref="model_inventory_item"/>
+            <field name="state">code</field>
+            <field name="code">records.write({'status': 'aktif'})</field>
+        </record>
+
+        <record id="action_set_digunakan" model="ir.actions.server">
+            <field name="name">Set ke Digunakan</field>
+            <field name="model_id" ref="model_inventory_item"/>
+            <field name="binding_model_id" ref="model_inventory_item"/>
+            <field name="state">code</field>
+            <field name="code">records.write({'status': 'digunakan'})</field>
+        </record>
+
+        <menuitem
+            id="inventory_menu_root"
+            name="Inventory"
+            sequence="50"/>
+
+        <menuitem
+            id="inventory_menu_list"
+            name="Daftar Barang"
+            parent="inventory_menu_root"
+            action="inventory_action_list"
+            sequence="10"/>
+
+        <menuitem
+            id="inventory_menu_category"
+            name="Kategori"
+            parent="inventory_menu_root"
+            action="inventory_category_action"
+            sequence="20"/>
+
+    </data>
+</odoo>
