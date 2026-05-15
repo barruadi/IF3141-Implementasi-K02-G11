@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="dashboard.EcoethnoDashboard" owl="1">
+        <div class="o_eco_dashboard">
+            <div class="o_eco_page_header">
+                <div class="o_eco_breadcrumb">Home</div>
+                <div class="o_eco_header_row">
+                    <h1>Dashboard</h1>
+                    <div class="o_eco_filters">
+                        <button type="button" t-att-class="periodButtonClass('day')" data-period="day" t-on-click="onPeriodClick">Hari ini</button>
+                        <button type="button" t-att-class="periodButtonClass('week')" data-period="week" t-on-click="onPeriodClick">Minggu ini</button>
+                        <button type="button" t-att-class="periodButtonClass('month')" data-period="month" t-on-click="onPeriodClick">Bulan ini</button>
+                        <button type="button" t-att-class="periodButtonClass('year')" data-period="year" t-on-click="onPeriodClick">Tahun ini</button>
+                        <input class="o_eco_date_input" type="date" t-att-value="state.dateStart" t-on-change="onDateStartChange"/>
+                        <span class="o_eco_date_separator">sampai</span>
+                        <input class="o_eco_date_input" type="date" t-att-value="state.dateEnd" t-on-change="onDateEndChange"/>
+                        <button type="button" class="o_eco_action_button" t-att-disabled="customApplyDisabled" t-on-click="applyCustomDate">Terapkan</button>
+                        <button type="button" class="o_eco_secondary_button" t-on-click="resetFilters">Reset</button>
+                    </div>
+                </div>
+            </div>
+
+            <div t-if="state.loading" class="o_eco_loading">Memuat dashboard...</div>
+            <div t-elif="state.error" class="o_eco_error" t-esc="state.error"/>
+            <div t-else="" class="o_eco_content">
+                <section class="o_eco_cards">
+                    <t t-foreach="state.data.cards" t-as="card" t-key="card.key">
+                        <article class="o_eco_card">
+                            <div class="o_eco_card_top">
+                                <span t-esc="card.label"/>
+                                <span class="o_eco_info_icon">i</span>
+                            </div>
+                            <div class="o_eco_card_value" t-esc="formatCardValue(card)"/>
+                            <div class="o_eco_divider"/>
+                            <div class="o_eco_card_daily">
+                                <span>Hari ini</span>
+                                <strong t-esc="formatCardDaily(card)"/>
+                            </div>
+                        </article>
+                    </t>
+                </section>
+
+                <section class="o_eco_chart_grid">
+                    <article class="o_eco_panel o_eco_trend_panel">
+                        <div class="o_eco_panel_tabs">
+                            <span class="is-active">Kunjungan</span>
+                        </div>
+                        <h2>Tren Reservasi</h2>
+                        <div t-if="state.data.reservation_trend.length" class="o_eco_bar_chart">
+                            <t t-foreach="state.data.reservation_trend" t-as="point" t-key="point.key">
+                                <div class="o_eco_bar_item">
+                                    <div class="o_eco_bar_track">
+                                        <div class="o_eco_bar" t-att-style="barStyle(point)"/>
+                                    </div>
+                                    <span t-esc="point.label"/>
+                                </div>
+                            </t>
+                        </div>
+                        <div t-else="" class="o_eco_empty">Belum ada data reservasi.</div>
+                    </article>
+
+                    <article class="o_eco_panel o_eco_donut_panel">
+                        <div class="o_eco_panel_title">
+                            <span>Kunjungan</span>
+                            <span class="o_eco_info_icon">i</span>
+                        </div>
+                        <div class="o_eco_donut_wrap">
+                            <div class="o_eco_donut" t-att-style="donutStyle()">
+                                <div class="o_eco_donut_hole"/>
+                            </div>
+                        </div>
+                        <div t-if="hasDistribution" class="o_eco_distribution">
+                            <t t-foreach="state.data.visit_distribution" t-as="item" t-key="item.key">
+                                <div class="o_eco_distribution_row">
+                                    <span t-esc="item.label"/>
+                                    <strong t-esc="formatNumber(item.value)"/>
+                                </div>
+                            </t>
+                        </div>
+                        <div t-else="" class="o_eco_empty">Belum ada data kunjungan.</div>
+                    </article>
+                </section>
+
+                <section class="o_eco_panel o_eco_table_panel">
+                    <h2>Reservasi Terbaru</h2>
+                    <div class="o_eco_table_scroll">
+                        <table class="o_eco_table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Deskripsi</th>
+                                    <th>Pelanggan</th>
+                                    <th>Tanggal Kunjungan</th>
+                                    <th>Peserta</th>
+                                    <th>Status</th>
+                                    <th>Platform</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-if="!state.data.recent_reservations.length">
+                                    <td colspan="8" class="o_eco_empty_cell">Belum ada reservasi pada periode ini.</td>
+                                </tr>
+                                <t t-foreach="state.data.recent_reservations" t-as="row" t-key="row.id">
+                                    <tr>
+                                        <td t-esc="formatReservationCode(row)"/>
+                                        <td t-esc="row.name"/>
+                                        <td t-esc="row.customer"/>
+                                        <td t-esc="formatDate(row.visit_date)"/>
+                                        <td t-esc="formatNumber(row.participants)"/>
+                                        <td><span t-att-class="statusLabelClass(row.status)" t-esc="row.status_label"/></td>
+                                        <td><span class="o_eco_tag" t-esc="row.platform"/></td>
+                                        <td>
+                                            <button type="button" class="o_eco_link_button" data-model="reservasi.reservasi" t-att-data-id="row.id" t-on-click="openRecordFromDataset">Detail</button>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="o_eco_panel o_eco_table_panel">
+                    <h2>Inventaris</h2>
+                    <div class="o_eco_table_scroll">
+                        <table class="o_eco_table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Deskripsi</th>
+                                    <th>Stok</th>
+                                    <th>Status</th>
+                                    <th>Kategori</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-if="!state.data.inventory_rows.length">
+                                    <td colspan="6" class="o_eco_empty_cell">Belum ada stok inventaris internal.</td>
+                                </tr>
+                                <t t-foreach="state.data.inventory_rows" t-as="row" t-key="row.id">
+                                    <tr>
+                                        <td t-esc="row.code"/>
+                                        <td t-esc="row.name"/>
+                                        <td t-esc="formatQuantity(row.quantity)"/>
+                                        <td><span t-att-class="inventoryStatusClass(row.status)" t-esc="inventoryStatusLabel(row.status)"/></td>
+                                        <td><span class="o_eco_tag" t-esc="row.category"/></td>
+                                        <td>
+                                            <button type="button" class="o_eco_link_button" data-model="inventory.item" t-att-data-id="row.id" t-on-click="openRecordFromDataset">Detail</button>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="module_category_ecoethno" model="ir.module.category">
+        <field name="name">Ecoethno</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="group_ecoethno_admin" model="res.groups">
+        <field name="name">Ecoethno Admin</field>
+        <field name="category_id" ref="module_category_ecoethno"/>
+    </record>
+
+    <record id="group_ecoethno_manager" model="res.groups">
+        <field name="name">Ecoethno Manager</field>
+        <field name="category_id" ref="module_category_ecoethno"/>
+    </record>
+
+    <record id="group_ecoethno_staff" model="res.groups">
+        <field name="name">Ecoethno Staff</field>
+        <field name="category_id" ref="module_category_ecoethno"/>
+    </record>
+
+</odoo>

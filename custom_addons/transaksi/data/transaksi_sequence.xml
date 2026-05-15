@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="sequence_transaksi_transaksi" model="ir.sequence">
+            <field name="name">Transaksi Ecoethno</field>
+            <field name="code">transaksi.transaksi</field>
+            <field name="prefix">TRANS/</field>
+            <field name="padding">6</field>
+            <field name="number_next">1</field>
+        </record>
+    </data>
+</odoo>

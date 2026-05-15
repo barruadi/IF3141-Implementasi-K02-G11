@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Tree / List View -->
+        <record id="feedback_view_tree" model="ir.ui.view">
+            <field name="name">feedback.feedback.tree</field>
+            <field name="model">feedback.feedback</field>
+            <field name="arch" type="xml">
+                <tree string="Daftar Feedback"
+                      decoration-success="rating == '5'"
+                      decoration-info="rating == '4'"
+                      decoration-warning="rating == '3'"
+                      decoration-danger="rating in ('1', '2')">
+                    <field name="no_feedback"/>
+                    <field name="customer_name"/>
+                    <field name="reservasi_id"/>
+                    <field name="tanggal_kunjungan"/>
+                    <field name="tanggal_feedback"/>
+                    <field name="rating"/>
+                    <field name="catatan_feedback" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="feedback_view_search" model="ir.ui.view">
+            <field name="name">feedback.feedback.search</field>
+            <field name="model">feedback.feedback</field>
+            <field name="arch" type="xml">
+                <search string="Cari Feedback">
+                    <filter name="filter_rating_5" string="Sangat Puas (5)"
+                            domain="[('rating', '=', '5')]"/>
+                    <filter name="filter_rating_4" string="Puas (4)"
+                            domain="[('rating', '=', '4')]"/>
+                    <filter name="filter_rating_3" string="Cukup (3)"
+                            domain="[('rating', '=', '3')]"/>
+                    <filter name="filter_low_rating" string="Rating Rendah (1-2)"
+                            domain="[('rating', 'in', ('1', '2'))]"/>
+
+                    <separator/>
+
+                    <group expand="0" string="Kelompokkan Berdasarkan">
+                        <filter name="group_by_rating" string="Rating"
+                                context="{'group_by': 'rating'}"/>
+                        <filter name="group_by_customer" string="Pelanggan"
+                                context="{'group_by': 'customer_name'}"/>
+                        <filter name="group_by_date" string="Tanggal Feedback"
+                                context="{'group_by': 'tanggal_feedback:month'}"/>
+                    </group>
+
+                    <field name="no_feedback"/>
+                    <field name="customer_name"/>
+                    <field name="reservasi_id"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Graph View -->
+        <record id="feedback_view_graph" model="ir.ui.view">
+            <field name="name">feedback.feedback.graph</field>
+            <field name="model">feedback.feedback</field>
+            <field name="arch" type="xml">
+                <graph string="Grafik Feedback" type="bar">
+                    <field name="rating" type="row"/>
+                </graph>
+            </field>
+        </record>
+
+    </data>
+</odoo>

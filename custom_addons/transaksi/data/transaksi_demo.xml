@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ================================================ -->
+        <!-- SEED DATA: Pelanggan (res.partner)                -->
+        <!-- ================================================ -->
+        <record id="partner_budi" model="res.partner">
+            <field name="name">Budi Santoso</field>
+            <field name="phone">081234567890</field>
+            <field name="email">budi.santoso@email.com</field>
+            <field name="street">Jl. Raya Lembang No. 10</field>
+            <field name="city">Bandung</field>
+        </record>
+
+        <record id="partner_siti" model="res.partner">
+            <field name="name">Siti Nurhaliza</field>
+            <field name="phone">082198765432</field>
+            <field name="email">siti.nurhaliza@email.com</field>
+            <field name="street">Jl. Dago Atas No. 25</field>
+            <field name="city">Bandung</field>
+        </record>
+
+        <record id="partner_ahmad" model="res.partner">
+            <field name="name">Ahmad Fauzi</field>
+            <field name="phone">085312345678</field>
+            <field name="email">ahmad.fauzi@email.com</field>
+            <field name="street">Jl. Setiabudi No. 15</field>
+            <field name="city">Bandung</field>
+        </record>
+
+        <record id="partner_dewi" model="res.partner">
+            <field name="name">Dewi Lestari</field>
+            <field name="phone">087856781234</field>
+            <field name="email">dewi.lestari@email.com</field>
+            <field name="street">Jl. Cihampelas No. 5</field>
+            <field name="city">Bandung</field>
+        </record>
+
+        <!-- ================================================ -->
+        <!-- SEED DATA: Reservasi (status confirmed/done)      -->
+        <!-- Prasyarat agar transaksi bisa dibuat               -->
+        <!-- ================================================ -->
+
+        <!-- Reservasi 1: Confirmed - siap untuk transaksi -->
+        <record id="reservasi_seed_1" model="reservasi.reservasi">
+            <field name="nama_reservasi">Camping Keluarga Budi</field>
+            <field name="customer_id" ref="partner_budi"/>
+            <field name="tanggal_kunjungan">2026-05-15</field>
+            <field name="jumlah_peserta">10</field>
+            <field name="platform_pemesanan">traveloka</field>
+            <field name="status_reservasi">confirmed</field>
+            <field name="catatan">Reservasi camping untuk keluarga besar, 2 malam</field>
+        </record>
+
+        <!-- Reservasi 2: Done - sudah selesai kegiatan -->
+        <record id="reservasi_seed_2" model="reservasi.reservasi">
+            <field name="nama_reservasi">Outbound Kantor Siti</field>
+            <field name="customer_id" ref="partner_siti"/>
+            <field name="tanggal_kunjungan">2026-05-01</field>
+            <field name="jumlah_peserta">25</field>
+            <field name="platform_pemesanan">whatsapp</field>
+            <field name="status_reservasi">done</field>
+            <field name="catatan">Outbound team building divisi HRD, sudah terlaksana</field>
+        </record>
+
+        <!-- Reservasi 3: Done - sudah selesai -->
+        <record id="reservasi_seed_3" model="reservasi.reservasi">
+            <field name="nama_reservasi">Workshop Fotografi Ahmad</field>
+            <field name="customer_id" ref="partner_ahmad"/>
+            <field name="tanggal_kunjungan">2026-04-20</field>
+            <field name="jumlah_peserta">15</field>
+            <field name="platform_pemesanan">website</field>
+            <field name="status_reservasi">done</field>
+            <field name="catatan">Workshop fotografi alam, 1 hari penuh</field>
+        </record>
+
+        <!-- Reservasi 4: Confirmed - menunggu kegiatan -->
+        <record id="reservasi_seed_4" model="reservasi.reservasi">
+            <field name="nama_reservasi">Camping Akhir Pekan Dewi</field>
+            <field name="customer_id" ref="partner_dewi"/>
+            <field name="tanggal_kunjungan">2026-05-20</field>
+            <field name="jumlah_peserta">8</field>
+            <field name="platform_pemesanan">langsung</field>
+            <field name="status_reservasi">confirmed</field>
+            <field name="catatan">Camping weekend bersama teman-teman</field>
+        </record>
+
+        <!-- Reservasi 5: Draft - TIDAK boleh muncul di dropdown transaksi -->
+        <record id="reservasi_seed_5_draft" model="reservasi.reservasi">
+            <field name="nama_reservasi">Rencana Retreat (Belum Konfirmasi)</field>
+            <field name="customer_id" ref="partner_budi"/>
+            <field name="tanggal_kunjungan">2026-06-15</field>
+            <field name="jumlah_peserta">20</field>
+            <field name="platform_pemesanan">whatsapp</field>
+            <field name="status_reservasi">draft</field>
+            <field name="catatan">Masih dalam tahap negosiasi</field>
+        </record>
+
+        <!-- ================================================ -->
+        <!-- SEED DATA: Transaksi (contoh transaksi existing)  -->
+        <!-- ================================================ -->
+
+        <!-- Transaksi 1: Lunas - dari reservasi yang sudah done -->
+        <record id="transaksi_seed_1" model="transaksi.transaksi">
+            <field name="tanggal_transaksi">2026-05-02</field>
+            <field name="reservasi_id" ref="reservasi_seed_2"/>
+            <field name="harga_satuan">150000</field>
+            <field name="status_pembayaran">lunas</field>
+            <field name="tanggal_pembayaran">2026-05-02</field>
+            <field name="metode_pembayaran">transfer_bank</field>
+            <field name="catatan">Pembayaran outbound kantor, lunas via transfer BCA</field>
+        </record>
+
+        <!-- Transaksi 2: Sebagian dibayar - dari reservasi done -->
+        <record id="transaksi_seed_2" model="transaksi.transaksi">
+            <field name="tanggal_transaksi">2026-04-21</field>
+            <field name="reservasi_id" ref="reservasi_seed_3"/>
+            <field name="harga_satuan">200000</field>
+            <field name="status_pembayaran">sebagian</field>
+            <field name="metode_pembayaran">e_wallet</field>
+            <field name="catatan">DP 50% workshop fotografi, sisa dibayar nanti</field>
+        </record>
+
+    </data>
+</odoo>
