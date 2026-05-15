@@ -146,7 +146,7 @@
                                         <td><span t-att-class="inventoryStatusClass(row.status)" t-esc="inventoryStatusLabel(row.status)"/></td>
                                         <td><span class="o_eco_tag" t-esc="row.category"/></td>
                                         <td>
-                                            <button type="button" class="o_eco_link_button" data-model="product.product" t-att-data-id="row.id" t-on-click="openRecordFromDataset">Detail</button>
+                                            <button type="button" class="o_eco_link_button" data-model="inventory.item" t-att-data-id="row.id" t-on-click="openRecordFromDataset">Detail</button>
                                         </td>
                                     </tr>
                                 </t>

@@ -235,84 +235,33 @@ class DashboardEcoethno(models.AbstractModel):
             })
         return rows
 
-    def _get_internal_location_ids(self):
-        return self.env['stock.location'].sudo().search([('usage', '=', 'internal')]).ids
-
-    def _get_inventory_domain(self):
-        location_ids = self._get_internal_location_ids()
-        if not location_ids:
-            return [('id', '=', 0)]
-        return [
-            ('location_id', 'in', location_ids),
-            ('quantity', '>', 0),
-        ]
-
     def _get_inventory_total(self):
-        return self._sum_model('stock.quant', self._get_inventory_domain(), 'quantity')
+        return self._sum_model('inventory.item', [], 'stocks')
 
     def _get_inventory_daily(self, today):
-        domain = self._get_inventory_domain() + self._datetime_day_domain('write_date', today)
-        return self._sum_model('stock.quant', domain, 'quantity')
+        domain = self._datetime_day_domain('write_date', today)
+        return self._sum_model('inventory.item', domain, 'stocks')
 
     def _get_inventory_rows(self):
-        groups = self.env['stock.quant'].sudo().read_group(
-            self._get_inventory_domain(),
-            ['product_id', 'quantity:sum'],
-            ['product_id'],
-        )
-        sorted_groups = sorted(groups, key=lambda group: group.get('quantity') or 0, reverse=True)[:5]
-        product_ids = [
-            group['product_id'][0]
-            for group in sorted_groups
-            if group.get('product_id')
-        ]
-        products = {product.id: product for product in self.env['product.product'].sudo().browse(product_ids)}
-        min_qty_by_product = self._get_reorder_min_qty(product_ids)
-
+        items = self.env['inventory.item'].sudo().search([], order='stocks asc, item_id asc')
         rows = []
-        for group in sorted_groups:
-            product_info = group.get('product_id')
-            if not product_info:
-                continue
-            product_id = product_info[0]
-            product = products.get(product_id)
-            if not product:
-                continue
-            quantity = group.get('quantity') or 0
+        for item in items:
+            quantity = item.stocks or 0
             rows.append({
-                'id': product.id,
-                'code': product.default_code or f'P-{product.id:03d}',
-                'name': product.display_name,
+                'id': item.id,
+                'code': item.item_id,
+                'name': item.description,
                 'quantity': quantity,
-                'status': self._inventory_status(quantity, min_qty_by_product.get(product_id, 5)),
-                'category': product.categ_id.display_name or '-',
-                'action': self._record_action('product.product', product.id),
+                'status': self._inventory_status(quantity),
+                'category': ', '.join(item.category_ids.mapped('name')) or '-',
+                'action': self._record_action('inventory.item', item.id),
             })
         return rows
 
-    def _get_reorder_min_qty(self, product_ids):
-        if not product_ids:
-            return {}
-        orderpoints = self.env['stock.warehouse.orderpoint'].sudo().search_read(
-            [('product_id', 'in', product_ids)],
-            ['product_id', 'product_min_qty'],
-        )
-        min_qty_by_product = {}
-        for orderpoint in orderpoints:
-            product = orderpoint.get('product_id')
-            if not product:
-                continue
-            product_id = product[0]
-            min_qty_by_product[product_id] = max(
-                min_qty_by_product.get(product_id, 0),
-                orderpoint.get('product_min_qty') or 0,
-            )
-        return min_qty_by_product
-
-    def _inventory_status(self, quantity, min_quantity):
+    def _inventory_status(self, quantity):
         if quantity <= 0:
             return 'out'
-        if quantity <= min_quantity:
+        if quantity <= 5:
             return 'low'
         return 'available'
 

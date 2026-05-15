@@ -17,7 +17,7 @@
         'base',
         'web',
         'spreadsheet_dashboard',
-        'stock',
+        'inventory',
         'reservasi',
         'transaksi',
         'feedback',
